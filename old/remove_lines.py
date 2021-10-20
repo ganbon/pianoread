@@ -123,7 +123,7 @@ def remove_h_line(im, w, min_l, y, weight, draw):
   for item in lists:
     top = int(item[1] - (weight - 1) / 2 - overflow)
     bottom = int(item[1] + (weight - 1) / 2 + overflow)
-    draw.line(((item[0], top), (item[0], bottom)), width=1, fill= 255)
+    draw.line(((item[0], top), (item[0], bottom)), width=1, fill= 128)
 
 
 def remove_v_line(im, yt, yb, min_l, x, weight, draw):
