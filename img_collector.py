@@ -46,21 +46,6 @@ class ImageCollector:
         return ndimage.rotate(self._img, ave_arg, cval = 255)
 
 
-    # def remove_line(self, img, thresh=100, min_l=200, max_gap=2, diff=90):
-    #     reverse_img = cv2.Canny(img, 150, 300, L2gradient=True)
-    #     # reverse_img = cv2.bitwise_not(img)
-    #     lines = cv2.HoughLinesP(reverse_img, rho=1, theta=np.pi / 720, threshold=int(thresh), minLineLength=int(min_l), maxLineGap=int(max_gap))
-
-    #     for line in lines:
-    #         for x1, y1, x2, y2 in line:
-    #             arg = math.degrees(math.atan2((y2-y1), (x2-x1)))
-    #             if diff > arg > -diff:
-    #                 img = cv2.line(img, (x1, y1), (x2, y2), 128, 1)
-
-    #     cv2.imwrite('data/dst/test4.png', reverse_img)
-    #     cv2.imwrite('data/dst/test3.png', img)
-
-
     @property
     def imgs(self):
         return [self._img, self._img_thresh]

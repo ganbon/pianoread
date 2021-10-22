@@ -29,11 +29,14 @@ class Prot:
 
 
     def marbles(self, marbles):
+        flg = 0
         for i1 in marbles:
             for i2 in i1:
                 margin = int(i2[2])
+                flg = 0 if flg else 1
                 for j1, j2 in zip(i2[0], i2[1]):
+                    color_ = [(0, 255, 255), (255, 255, 0)]
                     for j3 in j2:
-                        cv2.circle(self._img_rgb, center=(j3, j1), radius=margin // 2, color=(0, 255, 0), thickness=-1)
+                        cv2.circle(self._img_rgb, center=(j3, j1[0]), radius=margin // 2, color=color_[flg], thickness=-1)
 
         cv2.imwrite('data/dst/marble.png', self._img_rgb)

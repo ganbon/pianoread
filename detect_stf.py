@@ -16,7 +16,7 @@ class StfDetector(LineDetector):
 
         require_reprocess = False
         for item in grouped_data:
-            if 5 > len(item) > 1 or staff_data == 0:
+            if 5 > len(item) > 1 or len(staff_data) == 0:
                 require_reprocess = True
                 break
 
@@ -48,7 +48,7 @@ class StfDetector(LineDetector):
 
         result = np.array([kv[0] for kv in distance.items() if kv[1] == max(distance.values())])
 
-        return np.mean(result)
+        return np.mean(result) if len(result) else 0
 
     
     def complement_noise(self, grouped_data):

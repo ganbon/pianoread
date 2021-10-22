@@ -6,6 +6,8 @@ class Staff:
         self._no = no
         self._staff_lines = data
         self._margin_staff, self._margin_list = self.margin_ave(data)
+        self._top = self._staff_lines[0][0]
+        self._bottom = self._staff_lines[-1][0]
 
 
     def margin_ave(self, data):
@@ -111,32 +113,81 @@ class Staff:
         return judge, count
 
 
-    def search_marble_f1(self, img):
-        scan_y = [[i[0] - self._margin_staff / 2, i[0]] for i in self._staff_lines]
-        scan_y = list(np.ravel(scan_y))
-        scan_y += [self._staff_lines[-1][0] + self._margin_staff / 2]
-        scan_y = [round(i) for i in scan_y]
+    def search_marble_f1(self, img, top, bottom):
+        scan_y = []
+        for idx, item in enumerate(self._staff_lines):
+            scan_y.extend([(item[0], idx * 2), (item[0] + self._margin_staff / 2, idx * 2 + 1)])
+        scan_y.pop(-1)
+
+        scan_y_top = []
+        scan_y_bottom = []
+        bottom_y = self._bottom
+        top_y = self._top
+        for i in range(int((bottom - self._bottom - self._margin_staff) // (self._margin_staff / 2))):
+            bottom_y += self._margin_staff / 2
+            scan_y_bottom.append((bottom_y, i + len(scan_y)))
+
+        for i in range(int((self._top - top - self._margin_staff) // (self._margin_staff / 2))):
+            top_y -= self._margin_staff / 2
+            scan_y_top.insert(0, (top_y, -i - 1))
+
+        scan_y = scan_y_top + scan_y + scan_y_bottom
+        scan_y = [(round(i[0]), i[1]) for i in scan_y]
         
         h, w = img.shape[:2]
         mask_margin = int(self._margin_staff) if int(self._margin_staff) % 2 else int(self._margin_staff) + 1
+        mask_margin -= 2
         mask = np.zeros((mask_margin, mask_margin), dtype=np.uint8)
         margin_r = mask_margin // 2
         cv2.circle(mask, center=(margin_r, margin_r), radius=margin_r, color=255, thickness=-1)
 
         lists = []
         for y in scan_y:
-            lists.append(self.scan_marble_on_horizon(img, w, y, mask, margin_r))
+            lists.append(self.scan_marble_on_horizon(img, w, y[0], y[1], mask, margin_r))
 
-        return [scan_y, lists, self._margin_staff]
+        return [scan_y, lists, mask_margin]
 
 
-    def scan_marble_on_horizon(self, img, w, y, mask, margin_r):
+    def scan_marble_on_horizon(self, img, w, y, no, mask, margin_r):
         list_ = []
         for i in range(margin_r, w - margin_r):
             if img[y, i] == 0:
-                img_p = img[y - margin_r: y + margin_r + 1, i - margin_r: i + margin_r + 1]
-                img_p = img_p & mask
-                if np.count_nonzero(img_p == 255) <= img_p.size // 100:
-                    list_.append(i)
+                for j in range(-1, 2):
+                    img_p = img[y - margin_r + j: y + margin_r + 1 + j, i - margin_r: i + margin_r + 1]
+                    img_p = img_p & mask
+                    if np.count_nonzero(img_p == 255) <= img_p.size // 100 and self.concrete_extend_marble(img, i, no):
+                        list_.append(i)
+                        break
 
         return list_
+
+
+    def concrete_extend_marble(self, img, x, no):
+        if 0 <= no <= 8:
+            return True 
+        diff = (no - 8) // 2 if no > 0 else -no // 2
+        pos = self._bottom if no > 0 else self._top
+        length = self._margin_staff
+        for i in range(diff):
+            if no > 0:
+                pos += length
+            else:
+                pos -= length
+            img_p = img[round(pos) - 1: round(pos) + 2, x - int(length // 2): x + int(length // 2)]
+            flg = False
+            for item in img_p:
+                flg = True if not np.count_nonzero(item == 255) else flg
+            if not flg:
+                return False
+
+        return True
+
+
+    @property
+    def top(self):
+        return self._top
+
+
+    @property
+    def bottom(self):
+        return self._bottom

@@ -3,7 +3,7 @@ from prot import Prot
 
 
 def main():
-    PATH = "./data/Original_Score/0014.jpg"
+    PATH = "./data/Original_Score/0007.jpg"
     score = Score(PATH)
     lines_data, pitch = score.detect_lines()
     score.register_stf(lines_data)

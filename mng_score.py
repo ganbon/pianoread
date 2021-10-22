@@ -1,4 +1,3 @@
-from scipy.ndimage import interpolation
 from img_collector import ImageCollector
 from detect_stf import StfDetector
 from detect_para import ParagraphDetector
@@ -54,10 +53,11 @@ class Score:
         cv2.imwrite('data/dst/test.png', self._img2)
 
         self._img3 = self._img2.copy()
-        # self._img3 = cv2.resize(self._img3, dsize=None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
-        # self._img.remove_line(self._img3, thresh=pitch, min_l=pitch * 3, max_gap=1, diff=85)
-        # self._img3 = cv2.resize(self._img3, dsize=None, fx=0.25, fy=0.25, interpolation=cv2.INTER_NEAREST)
-        result = [i.search_marble_f1(self._img3) for i in self._paragraph]
+        result = []
+        for idx, item in enumerate(self._paragraph):
+            top = 0 if idx == 0 else self._paragraph[idx - 1].bottom
+            bottom = self._img.info[0] if idx == len(self._paragraph) - 1 else self._paragraph[idx + 1].top
+            result.append(item.search_marble_f1(self._img3, top, bottom))
         return result
 
 
