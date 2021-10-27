@@ -135,25 +135,29 @@ class Staff:
         scan_y = [(round(i[0]), i[1]) for i in scan_y]
         
         h, w = img.shape[:2]
-        mask_margin = int(self._margin_staff) if int(self._margin_staff) % 2 else int(self._margin_staff) + 1
-        mask_margin -= 2
-        mask = np.zeros((mask_margin, mask_margin), dtype=np.uint8)
-        margin_r = mask_margin // 2
-        cv2.circle(mask, center=(margin_r, margin_r), radius=margin_r, color=255, thickness=-1)
+        mask_margin_v = int(self._margin_staff) if int(self._margin_staff) % 2 else int(self._margin_staff) + 1
+        mask_margin_h = int(self._margin_staff * 1.5) if int(self._margin_staff * 1.5) % 2 else int(self._margin_staff * 1.5) + 1
+
+        # mask_margin -= 2
+        mask = np.zeros((mask_margin_v, mask_margin_h), dtype=np.uint8)
+        margin_vr = mask_margin_v // 2
+        margin_hr = mask_margin_h // 2
+        cv2.ellipse(mask, box=((margin_hr, margin_vr), (int(mask_margin_v * 1), int(mask_margin_v * 0.6)), 315), color=255, thickness=-1)
+        cv2.imwrite('data/dst/test2.png', mask)
 
         lists = []
         for y in scan_y:
-            lists.append(self.scan_marble_on_horizon(img, w, y[0], y[1], mask, margin_r))
+            lists.append(self.scan_marble_on_horizon(img, w, y[0], y[1], mask, margin_vr, margin_hr))
 
-        return [scan_y, lists, mask_margin]
+        return [scan_y, lists, self._margin_staff]
 
 
-    def scan_marble_on_horizon(self, img, w, y, no, mask, margin_r):
+    def scan_marble_on_horizon(self, img, w, y, no, mask, margin_vr, margin_hr):
         list_ = []
-        for i in range(margin_r, w - margin_r):
+        for i in range(margin_hr, w - margin_hr):
             if img[y, i] == 0:
                 for j in range(-1, 2):
-                    img_p = img[y - margin_r + j: y + margin_r + 1 + j, i - margin_r: i + margin_r + 1]
+                    img_p = img[y - margin_vr + j: y + margin_vr + 1 + j, i - margin_hr: i + margin_hr + 1]
                     img_p = img_p & mask
                     if np.count_nonzero(img_p == 255) <= img_p.size // 100 and self.concrete_extend_marble(img, i, no):
                         list_.append(i)

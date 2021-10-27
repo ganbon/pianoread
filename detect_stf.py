@@ -26,7 +26,7 @@ class StfDetector(LineDetector):
     def grouping_data(self, data):
         dist_basis = self.meas_distance(data)
         result = []
-        tmp = [data[0]]
+        tmp = [data[0]] if len(data) else []
 
         LINE_PITCH_DIFF = 2
         for i in range(1, len(data)):

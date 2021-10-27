@@ -29,6 +29,7 @@ class ImageCollector:
         MAX_LINE_GAP = w // 5
 
         lines = cv2.HoughLinesP(reverse_img, 1, np.pi / 360, 100, MIN_LINE_LENGTH, MAX_LINE_GAP)
+        lines = lines if len(lines) else []
 
         HORIZONTAL = 0
         DIFF = 10       # 許容誤差 -> -10 - +10 を本来の水平線と考える
