@@ -8,6 +8,7 @@ class ParagraphDetector:
 
     
     def detect_para(self, staff):
+        bar_data = []
         para_data = []
         i = 0
         while i < len(staff) - 1:
@@ -15,15 +16,17 @@ class ParagraphDetector:
             bottom_y = int(staff[i + 1][-1][0] + (staff[i + 1][-1][1] - 1) / 2)
             img_part = self._img[top_y: bottom_y, 0: self._w]
             bar_detector = BarDetector(img_part)
-            bar_data = bar_detector.detect_bar()
+            bar = bar_detector.detect_bar()
 
-            if len(bar_data) >= 2:
+            if len(bar) >= 2:
                 para_data.append([staff[i], staff[i + 1]])
                 i += 1
             else:
                 para_data.append([staff[i]])
             i += 1
+            bar_data.append(bar)
         if i == len(staff) - 1:
             para_data.append([staff[i]])
+            bar_data.append(bar)
 
         return para_data

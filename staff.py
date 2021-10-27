@@ -96,6 +96,31 @@ class Staff:
         return lists
 
 
+    # def remove_bar(self, img):
+    #     _, w = img.shape[:2]
+    #     POINT = w // 2
+    #     OVERFLOW = 1
+    #     MIN_LENGTH = w // 140
+    #     middle_x1, middle_x2 = w * 2 // 5, w * 3 // 5
+    #     crop_x1, crop_x2 = POINT - MIN_LENGTH * 4, POINT + MIN_LENGTH * 4
+    #     for item in self._staff_lines:
+    #         lists = []
+    #         right_list = self.search_staff(item, img, POINT, w, MIN_LENGTH)
+    #         left_list = self.search_staff(item, img, POINT, 0, MIN_LENGTH)
+    #         middle_list = self.search_staff(item, img, middle_x1, middle_x2, MIN_LENGTH)
+
+    #         lists = left_list + right_list
+    #         lists = [i for i in lists if i[0] < crop_x1 or crop_x2 < i[0]]
+    #         middle_list = [i for i in middle_list if crop_x1 <= i[0] <= crop_x2]
+    #         lists.extend(middle_list)
+
+    #         for item2 in lists:
+    #             top = int(item2[1] - ((item[1] - 1) / 2 + OVERFLOW))
+    #             bottom = int(item2[1] + ((item[1] - 1) / 2 + OVERFLOW))
+    #             x = item2[0]
+    #             img = cv2.line(img, (x, top), (x, bottom), 255, 1)
+
+
     def judge_alone(self, img, x, py, width, limits):
         top_out = int(py - width - 1)
         bottom_out = int(py + width + 1)
