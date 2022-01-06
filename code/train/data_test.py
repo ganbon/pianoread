@@ -1,20 +1,26 @@
-import keras
+import tensorflow.keras
 import numpy as np
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 import cv2
+import os
+import warnings
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 # 音符の判定
-def result_img(img, train_data):
+
+def result_img(img_path, train_data):
+    warnings.simplefilter('ignore')
     model = load_model(train_data)
-    img = cv2.resize(img,(50, 100))
-    img = np.asarray(img)
-    img = img / 255.0
-    prd = model.predict(np.array([img]))
+    img = cv2.imread(img_path)
+    img_resize = cv2.resize(img, (50, 100))
+    img2 = np.asarray(img_resize)
+    img2 = img2 / 255.0
+    prd = model.predict(np.array([img2]))
     #print(prd)  # 精度の表示
     prelabel = np.argmax(prd, axis=1)
-    if np.max(prd) < 0.8:
+    if np.max(prd) < 0.7:
         #print("none")
         return -1
-    elif prelabel == 0:
+    if prelabel == 0:
         #print(">>>2on")
         return 2
     elif prelabel == 1:

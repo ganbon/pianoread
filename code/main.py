@@ -1,45 +1,43 @@
 import cv2
-import os
+import numpy as np
 import pandas as pd
-from note.note_scale import scale_disc
+from note.note_info import data_unpack
 from horizonal_line.del_line import horizonal_del
 from vertical_line.vertical import vertical_data
-from note.cut_note import notedetection, notedetection_min
-from train.data_test import result_img
-music_score = []
+from note.cut_note import notedetection,note_write
+from concurrent.futures import ThreadPoolExecutor
+import time
+start = time.time()
+func_list = []
 note_info = []
 train_data = "../train_data/train_cnn_note.h5"
 path = input()
+a = time.time()
+print(a-start)
 img = cv2.imread(path)
 img2 = horizonal_del(path)
+b = time.time()
+print(b-a)
 ver_datas, img3 = vertical_data(img2, path)
+c = time.time()
+print(c-b)
 note_datas = notedetection(img3, path)
-for data in note_datas:
-    x, y, h, w = data
-    note_img = img[y:y+h, x-5:x+w+5]
-    height, width = note_img.shape[:2]
-    try:
-        note_kind = result_img(note_img, train_data)
-        note_scale = scale_disc(path, data)
-        if note_kind != -1:
-            note_info.append((data, note_kind, note_scale))
-        #cv2.imwrite("../result2/"+ filename +"/cut"+str(i)+".png", node_img)
-    except cv2.error:
-        continue
-    if width > 100 and height > 40:
-        min_note_datas, min_imgs = notedetection_min(note_img)
-        for min_note in min_note_datas:
-            y2, x2, w, h = min_note
-            min_note_img = img[0:height, x-5:x+w+5]
-            try:
-                note_kind = result_img(min_imgs, train_data)
-                note_scale = scale_disc(path, data)
-                if note_kind != -1:
-                    note_info.append((min_note, note_kind, note_scale))
-                #cv2.imwrite("../result2/"+filename + "/cut"+str(i)+".png", min_note_img)
-            except cv2.error:
-                continue
-for note in note_info:
-    df = pd.DataFrame([note[0], note[1], note[2]],
-                      columns=['note', ',kind', 'scale'])
-    df.to_csv("test.csv")
+note_data_s=sum(note_datas,[])
+note_data_s=sum(note_data_s,[])
+d = time.time()
+print(d-c)
+for i,note in enumerate(note_data_s):
+    note_write(note[0],i,img3)
+e = time.time()
+print(e-d)
+files = ["../result/"+str(i)+".png" for i in range(len(note_data_s))]
+for img_data, coor in zip(files, note_data_s):
+    func_list.append([path, img_data, coor])
+with ThreadPoolExecutor(max_workers=50) as executor:
+    notes = executor.map(data_unpack, func_list, timeout=None)
+for note in notes:
+    note_info.append(note)
+print(time.time()-start)
+df = pd.DataFrame(data=note_info, columns=['note', ',kind', 'scale'])
+df.to_csv("test.csv")
+print(time.time()-start)

@@ -2,8 +2,10 @@ from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Activation, Dropout, Flatten, Dense
 from keras.utils import np_utils
+from tensorflow.keras import optimizers
 import keras
 import numpy as np
+
 
 #cnnで学習
 def model_train(X, y):
@@ -29,12 +31,12 @@ def model_train(X, y):
     model.add(Dense(7))
     model.add(Activation('softmax'))
 
-    opt = keras.optimizers.RMSprop(lr=0.0001, decay=1e-6)
+    opt = optimizers.RMSprop(lr=0.0001, decay=1e-6)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt, metrics=['accuracy'])
 
-    model.fit(X, y, batch_size=32, epochs=25)
+    model.fit(X, y, batch_size=64, epochs=20)
 
     # モデルの保存
     model.save("../../train_data/train_cnn_note.h5")
@@ -46,7 +48,7 @@ def model_eval(model, X, y):
     print('test Accuracy: ', scores[1])
     
     
-classes = ["2on", "4on", "8on", "16on", "8kyu", "4kyu", "allon"]
+classes = ["2on", "4on", "8on", "16on","8kyu", "4kyu", "allon"]
 num_classes = len(classes)
 X_train, X_test, y_train, y_test = np.load("../../notedata_set/note.npy", allow_pickle=True)
 X_train = X_train.astype("float") / 256
