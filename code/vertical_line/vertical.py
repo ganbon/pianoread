@@ -1,7 +1,7 @@
 import cv2
 from horizonal_line.line_data import scoreline_data
 
-#縦ラインの取得と削除
+#縦線のデータ取得と削除
 def vertical_data(img,data):
     img2=img.copy()
     black = [0, 0, 0]

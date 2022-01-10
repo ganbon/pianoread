@@ -1,4 +1,4 @@
-import re
+#判定精度を高める用
 import cv2
 import numpy as np
 import pandas as pd
@@ -16,17 +16,16 @@ note_coor = []
 func_list = []
 note_info = []
 train_data = "../train_data/train_cnn_note.h5"
-path = input()
+path = input() #楽譜のファイルのpathを入力
 img = cv2.imread(path)
 img2 = horizonal_del(path)
 ver_datas, img3 = vertical_data(img2, path)
-del img2
 note_datas = notedetection(img3, path)
 note_data_s = sum(note_datas, [])
 note_data_s = sum(note_data_s, [])
 for i, note in enumerate(note_data_s):
     note_write(note[0], i, img3)
-files = ["../result/2-8-"+str(i)+".png" for i in range(len(note_data_s))]
+files = ["../result/2-10-"+str(i)+".png" for i in range(len(note_data_s))]
 count=[0,0,0,0,0,0,0,0]
 for img in files:
     number = result_img(img, train_data)

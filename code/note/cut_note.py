@@ -61,8 +61,6 @@ def notedetection(img, path):
     return note_data
 
 # 音符を順番通りに並べる
-
-
 def note_sort(datas, path):
     horizonal_datas = scoreline_data(path)
     note_data = []
@@ -84,9 +82,9 @@ def note_sort(datas, path):
         note_data.append([s_t, s_c])
     return note_data
 
-
+#音符データを画像ファイル化
+#data_fix.pyの時はファイル名の重複を避けるためにファイル名を変えること
 def note_write(data, i, img):
-    # print(data)
     x, y, h, w = data
     img2 = img[y:y+h, x:x+w]
-    cv2.imwrite("../result/"+str(i)+".png", img2)
+    cv2.imwrite("../result/2-10-"+str(i)+".png", img2)

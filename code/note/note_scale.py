@@ -1,7 +1,7 @@
 import cv2
 from horizonal_line.line_data import scoreline_data
 
-
+#音階判定
 def scale_disc(path, img_data, img_kind):
     x, y, h, w = img_data[0]
     flg = img_data[1]
