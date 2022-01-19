@@ -1,10 +1,10 @@
 import numpy as np
 import wave
 
-def ra_synthesis():
+def synthesis():
     sampling_rate = 44100 # サンプリングレートは44100Hz
     x = np.linspace(0, 1, sampling_rate*1+1)
-    y = square(note_to_freq('C4'), x) # 440Hz
+    y = square(note_to_freq('C4'), x)
     y = np.concatenate([y, square(note_to_freq('D4'), x)])
     y = np.concatenate([y, square(note_to_freq('E4'), x)])
     y = np.concatenate([y, square(note_to_freq('F4'), x)])
@@ -32,4 +32,4 @@ def square(freq, t):
     return (np.ceil(t * freq * 2) % 2) * 2 - 1
 
 if __name__ == '__main__':
-    ra_synthesis()
+    synthesis()
