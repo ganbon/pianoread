@@ -10,9 +10,9 @@ import re
 def synthesizer(file_name):
     sampling_rate = 44100  # サンプリングレートは一般的な44100Hz
     bpm = 156
-    volume = {"master": 0.5,"square": 0.1, "pulse_quarter": 0.1, "pulse_eighth": 0.1, "triangle": 0.25, "sine": 0.5}
-    func = {"square": square, "pulse_quarter": pulse_quarter, "pulse_eighth": pulse_eighth, "triangle": triangle, "sine": sine}
-    define = ["square", "pulse_quarter", "pulse_quarter", "triangle", "pulse_eighth", "pulse_quarter"]
+    volume = {"master": 0.5,"square": 0.1, "pulse_quarter": 0.1, "pulse_eighth": 0.1, "triangle": 0.25, "noise": 0.5, "sine": 0.5}
+    func = {"square": square, "pulse_quarter": pulse_quarter, "pulse_eighth": pulse_eighth, "triangle": triangle, "noise": noise, "sine": sine}
+    define = ["square", "pulse_quarter", "pulse_quarter", "triangle", "pulse_eighth", "pulse_quarter", "noise"]
 
     # test_data = [[[("C4", 1)], 4], [[("C4", 1), ("E4", 1), ("G4", 1)], 4], [[("R", 0)], 2], [[("E4", 0.5), ("G4", 0.5), ("B4", 0.5)], 4]]
 
