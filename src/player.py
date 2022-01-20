@@ -9,10 +9,10 @@ import re
 
 def synthesizer(file_name):
     sampling_rate = 44100  # サンプリングレートは一般的な44100Hz
-    bpm = 120
-    volume = {"master": 0.5,"square": 0.1, "pulse_quarter": 0.1, "pulse_eighth": 0.1, "triangle": 0.2, "sine": 0.1}
+    bpm = 156
+    volume = {"master": 0.5,"square": 0.1, "pulse_quarter": 0.1, "pulse_eighth": 0.1, "triangle": 0.25, "sine": 0.5}
     func = {"square": square, "pulse_quarter": pulse_quarter, "pulse_eighth": pulse_eighth, "triangle": triangle, "sine": sine}
-    define = ["pulse_quarter", "pulse_quarter", "triangle"]
+    define = ["square", "pulse_quarter", "pulse_quarter", "triangle", "pulse_eighth", "pulse_quarter"]
 
     # test_data = [[[("C4", 1)], 4], [[("C4", 1), ("E4", 1), ("G4", 1)], 4], [[("R", 0)], 2], [[("E4", 0.5), ("G4", 0.5), ("B4", 0.5)], 4]]
 
@@ -27,7 +27,7 @@ def synthesizer(file_name):
     # 演奏終了地点より後ろをカット
     for i, item in enumerate(y[::-1]):
         if item != 0:
-            point = round(i - sampling_rate * 0.5)
+            point = round(i - sampling_rate * 1)
             break
     y = y[:-point]
 
@@ -35,11 +35,15 @@ def synthesizer(file_name):
     y = (y*32767).astype(np.int16)
 
     save_file = re.sub(r"^.*[/\\]|\.[^.]+", "", file_name)
-    with wave.Wave_write("../dst/{}.wav".format(save_file)) as fp:
-        fp.setframerate(sampling_rate)
-        fp.setnchannels(1) # モノラル
-        fp.setsampwidth(2) # 16ビット（バイト数を入力する）
-        fp.writeframes(y.tobytes()) # バイナリ化
+    try:
+        with wave.Wave_write("../dst/{}.wav".format(save_file)) as fp:
+            fp.setframerate(sampling_rate)
+            fp.setnchannels(1) # モノラル
+            fp.setsampwidth(2) # 16ビット（バイト数を入力する）
+            fp.writeframes(y.tobytes()) # バイナリ化
+    except Exception as e:
+        print(e)
+        exit(1)
 
 # CSVファイルの読み込み
 def import_data(file_name):
@@ -75,7 +79,7 @@ def gen_track(track_data, sampling_rate, whole_note, wave_generator):
     for idx, elm in enumerate(track_data):
         length = elm[1]
         if idx + 1 < len(track_data) and in_next(elm[0], track_data[idx + 1][0]):
-            elm[1] *= 0.94
+            elm[1] *= 0.92
         tmp = gen_unit(elm, sampling_rate, whole_note, wave_generator)
         x = math.ceil(sampling_rate * (t * whole_note))
         y[x:x + len(tmp)] += tmp
@@ -144,6 +148,17 @@ def pulse_eighth(freq, t):
 # 三角波
 def triangle(freq, t):
     return np.abs((2 * t * freq - 1 / 2) % 2 - 1) * 2 - 1
+
+# ノイズ(ファミコン風)
+def noise(freq, t):
+    duration = t[-1]-t[0]
+    coarse_x = np.linspace(t[0], t[-1], int(freq*20*duration)+1) # ここの倍率は要検討
+    coarse_noise = np.random.uniform(-1, 1, size=coarse_x.shape[0])
+    # 一次元のNearest Neighbor法
+    tile_n = int(np.ceil(t.shape[0]/coarse_x.shape[0]))
+    interpolate_noise = np.stack([coarse_noise for i in range(tile_n)], axis=-1)
+    return interpolate_noise.flatten()[:t.shape[0]]
+
 
 if __name__ == '__main__':
     args = sys.argv
