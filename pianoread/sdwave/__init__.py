@@ -1,2 +1,2 @@
-from pianoread.sdwave.waves import *
-from pianoread.sdwave.tools import *
+from sdwave.waves import *
+from sdwave.tools import *

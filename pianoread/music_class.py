@@ -4,7 +4,7 @@ import configparser as cp
 import os
 import shutil
 
-import pianoread.sdwave as sw
+import sdwave as sw
 
 class Music():
     def __init__(self, name, data):

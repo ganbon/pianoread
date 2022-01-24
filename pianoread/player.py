@@ -4,7 +4,7 @@ import csv
 from itertools import groupby
 from fractions import Fraction
 
-import pianoread.music_class as mc
+import music_class as mc
 
 def synthesizer(file_name):
     data = import_data(file_name)
