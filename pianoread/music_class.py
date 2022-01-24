@@ -43,12 +43,10 @@ class Music():
         y = sw.synthesize_wave(y) * self.volume
 
         # 曲の最後より後ろをカット
-        for i, item in enumerate(y[::-1]):
-            if item != 0:
-                point = round(i - self.sampling_rate * 1)
-                break
+        can = np.where(y != 0)[0][-1]
+        point = can + self.sampling_rate
 
-        return y[:-point]
+        return y[:point]
 
 class Track():
     def __init__(self, name, no, data):
