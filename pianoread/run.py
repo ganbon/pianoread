@@ -10,7 +10,7 @@ def test():
 
     args = sys.argv
     if 2 <= len(args):
-        ply.synthesizer(re.sub(r"^.*[/\\]|\.[^.]+", "", args[1]))
+        ply.synthesizer(re.sub(r"^.*[/\\]|\.[^.]+$", "", args[1]))
     else:
         print("引数が不足（入力ファイル名を指定してください）")
     
