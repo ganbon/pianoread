@@ -87,5 +87,6 @@ Amp = np.abs(y_f)
 # leg.get_frame().set_alpha(1)
 # plt.show()
 
-plt.plot(freqs, y_f)
+plt.plot(freqs, Amp)
+plt.set_xlim(- Amp / 2, Amp / 2)
 plt.show()
