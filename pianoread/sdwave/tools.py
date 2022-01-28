@@ -23,11 +23,7 @@ def note_to_freq(notestr):
 
 # 音波の合成
 def synthesize_wave(waves):
-    res = np.zeros(len(waves[0]))  # 合成先のダミーリスト
-
-    for wave in waves:
-        res += wave
-    return res
+    return np.sum(waves, axis = 0)
 
 # アタックを付与
 def add_attack(wave, time_ms, sampling_rate):

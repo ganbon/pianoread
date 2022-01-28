@@ -62,7 +62,7 @@ class Track():
             settings = inifile["track" + str(self.no)]
         except KeyError:
             try:
-                settings = inifile["track"]
+                settings = inifile["DEFAULT"]
             except KeyError as e:
                 print(e)
                 exit(1)

@@ -1,11 +1,5 @@
 import numpy as np
-
-def gen_wave(sound_length=1, freq=440, sampling_rate=44100, type="pulse_quarter"):
-    quantity = int(sound_length * sampling_rate + 0.5)
-    timing = np.linspace(0, sound_length, quantity + 1)  # 最後のタイミングも含めるので+1
-    timing = np.delete(timing, -1)  # 0<=x<len とする
-    func = eval("_" + type)
-    return func(freq, timing)
+import matplotlib.pyplot as plt
 
 def _zero(_, t):
     return t * 0
@@ -56,3 +50,42 @@ def _noise(freq, t):
     tile_n = int(np.ceil(t.shape[0]/coarse_x.shape[0]))
     interpolate_noise = np.stack([coarse_noise for i in range(tile_n)], axis=-1)
     return interpolate_noise.flatten()[:t.shape[0]]
+
+sampling_rate = 44100
+x = np.linspace(0, 2, sampling_rate * 2 + 1)
+freq = 2
+y = _sawtooth(freq, x)
+
+# plt.figure(figsize=(10, 2))
+# plt.plot(x, y)
+# plt.grid()
+# plt.savefig("./tests/triangle_stair.png")
+
+y_f = np.fft.fft(y) # 波形のフーリエ変換
+freqs = np.fft.fftfreq(len(y_f)) * sampling_rate # サンプリング周波数を返す
+
+# 振幅スペクトルを計算
+Amp = np.abs(y_f)
+
+# # グラフ表示
+# plt.figure()
+# plt.rcParams['font.family'] = 'Times New Roman'
+# plt.rcParams['font.size'] = 17
+# plt.subplot(121)
+# plt.plot(x, y, label='f(n)')
+# plt.xlabel("Time", fontsize=20)
+# plt.ylabel("Signal", fontsize=20)
+# plt.grid()
+# leg = plt.legend(loc=1, fontsize=25)
+# leg.get_frame().set_alpha(1)
+# plt.subplot(122)
+# plt.plot(freqs, Amp, label='|F(k)|')
+# plt.xlabel('Frequency', fontsize=20)
+# plt.ylabel('Amplitude', fontsize=20)
+# plt.grid()
+# leg = plt.legend(loc=1, fontsize=25)
+# leg.get_frame().set_alpha(1)
+# plt.show()
+
+plt.plot(freqs, y_f)
+plt.show()
